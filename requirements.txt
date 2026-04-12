@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+pdfplumber
+langgraph
+langchain
+langchain-community
+ezdxf
+reportlab
+openpyxl
+weasyprint
+jinja2
+anthropic
+requests
+lxml
