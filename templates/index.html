@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>INDUSTRIE IA</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a26;
+    --border: #2a2a3d;
+    --accent: #00e5a0;
+    --accent2: #0066ff;
+    --warn: #ff6b35;
+    --text: #e8e8f0;
+    --muted: #6b6b8a;
+    --font-mono: 'Space Mono', monospace;
+    --font-body: 'DM Sans', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-body); min-height: 100vh; }
+ 
+  /* grid bg */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.3;
+    pointer-events: none;
+  }
+ 
+  .container { max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem; position: relative; }
+ 
+  /* header */
+  .header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 2.5rem; }
+  .logo { display: flex; align-items: center; gap: 12px; }
+  .logo-mark { width: 36px; height: 36px; border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; }
+  .logo-mark svg { width: 18px; height: 18px; }
+  .logo-text h1 { font-family: var(--font-mono); font-size: 18px; font-weight: 700; color: var(--text); letter-spacing: 0.05em; }
+  .logo-text p { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .status-pill { font-family: var(--font-mono); font-size: 11px; color: var(--accent); border: 1px solid var(--accent); padding: 4px 10px; display: flex; align-items: center; gap: 6px; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+ 
+  /* upload */
+  .upload-section { margin-bottom: 2rem; }
+  .upload-zone {
+    border: 1px dashed var(--border);
+    padding: 2.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--surface);
+    position: relative;
+    overflow: hidden;
+  }
+  .upload-zone::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, transparent 40%, rgba(0,229,160,0.03) 100%);
+  }
+  .upload-zone:hover { border-color: var(--accent); }
+  .upload-zone.has-file { border-color: var(--accent); border-style: solid; }
+  .upload-icon { font-family: var(--font-mono); font-size: 28px; color: var(--accent); margin-bottom: 12px; }
+  .upload-title { font-family: var(--font-mono); font-size: 13px; color: var(--text); margin-bottom: 6px; }
+  .upload-sub { font-size: 13px; color: var(--muted); }
+  .upload-filename { font-family: var(--font-mono); font-size: 13px; color: var(--accent); margin-top: 8px; }
+ 
+  /* button */
+  .btn-run {
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 12px;
+  }
+  .btn-run:hover:not(:disabled) { background: #00ffb3; }
+  .btn-run:disabled { background: var(--surface2); color: var(--muted); cursor: not-allowed; }
+  .btn-run.running { background: var(--surface2); color: var(--accent); border: 1px solid var(--accent); }
+ 
+  /* progress */
+  .progress-section { margin-bottom: 2rem; display: none; }
+  .progress-section.visible { display: block; }
+  .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .progress-label { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+  .progress-pct { font-family: var(--font-mono); font-size: 12px; color: var(--accent); }
+  .progress-track { height: 2px; background: var(--border); }
+  .progress-fill { height: 100%; background: var(--accent); transition: width 0.5s; width: 0%; }
+ 
+  /* modules */
+  .modules-label { font-family: var(--font-mono); font-size: 11px; color: var(--muted); letter-spacing: 0.1em; margin-bottom: 12px; }
+  .modules-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 2rem; }
+  @media(max-width:560px){ .modules-grid { grid-template-columns: 1fr; } }
+ 
+  .mod-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 14px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    transition: border-color 0.3s;
+  }
+  .mod-card.running { border-color: var(--accent2); }
+  .mod-card.done { border-color: var(--accent); }
+  .mod-card.error { border-color: var(--warn); }
+ 
+  .mod-num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    transition: all 0.3s;
+  }
+  .mod-card.running .mod-num { border-color: var(--accent2); color: var(--accent2); }
+  .mod-card.done .mod-num { border-color: var(--accent); color: #000; background: var(--accent); }
+  .mod-card.error .mod-num { border-color: var(--warn); color: var(--warn); }
+ 
+  .mod-info { flex: 1; min-width: 0; }
+  .mod-name { font-size: 13px; font-weight: 500; color: var(--text); }
+  .mod-desc { font-size: 11px; color: var(--muted); margin-top: 3px; font-family: var(--font-mono); }
+  .mod-state { font-size: 11px; margin-top: 5px; color: var(--muted); }
+  .mod-card.running .mod-state { color: var(--accent2); }
+  .mod-card.done .mod-state { color: var(--accent); }
+  .mod-card.error .mod-state { color: var(--warn); }
+ 
+  /* terminal */
+  .terminal { background: var(--surface); border: 1px solid var(--border); padding: 0; overflow: hidden; display: none; margin-bottom: 2rem; }
+  .terminal.visible { display: block; }
+  .terminal-bar { background: var(--surface2); padding: 8px 14px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); }
+  .t-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .terminal-bar span { font-family: var(--font-mono); font-size: 11px; color: var(--muted); margin-left: 4px; }
+  .terminal-body { padding: 14px; max-height: 160px; overflow-y: auto; font-family: var(--font-mono); font-size: 12px; line-height: 1.8; }
+  .log-line { color: var(--muted); }
+  .log-line.info { color: var(--accent); }
+  .log-line.api { color: var(--accent2); }
+  .log-line.warn { color: var(--warn); }
+ 
+  /* outputs */
+  .outputs-section { display: none; }
+  .outputs-section.visible { display: block; }
+  .outputs-label { font-family: var(--font-mono); font-size: 11px; color: var(--muted); letter-spacing: 0.1em; margin-bottom: 12px; }
+  .files-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+  .file-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 14px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+  .file-card:hover { border-color: var(--accent); }
+  .file-ext { font-family: var(--font-mono); font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+  .file-name { font-size: 11px; color: var(--muted); word-break: break-all; }
+  .ext-pdf { color: var(--warn); }
+  .ext-xlsx { color: #00c853; }
+  .ext-html { color: var(--accent2); }
+  .ext-json { color: #ffd740; }
+  .ext-xml { color: #cc99ff; }
+  .ext-dxf { color: var(--accent); }
+ 
+  /* api info */
+  .api-bar { background: var(--surface2); border: 1px solid var(--border); padding: 14px; margin-top: 2rem; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .api-item { font-family: var(--font-mono); font-size: 11px; }
+  .api-item span { color: var(--muted); }
+  .api-item a { color: var(--accent2); text-decoration: none; }
+  .api-item a:hover { text-decoration: underline; }
+  .divider { width: 1px; height: 20px; background: var(--border); }
+</style>
+</head>
+<body>
+<div class="container">
+ 
+  <div class="header">
+    <div class="logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="1" y="1" width="6" height="6" stroke="#00e5a0" stroke-width="1.5"/>
+          <rect x="11" y="1" width="6" height="6" stroke="#00e5a0" stroke-width="1.5"/>
+          <rect x="1" y="11" width="6" height="6" stroke="#00e5a0" stroke-width="1.5"/>
+          <rect x="11" y="11" width="6" height="6" stroke="#0066ff" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <h1>INDUSTRIE IA</h1>
+        <p>OpenIndustry Algeria — AI Pipeline v1.0</p>
+      </div>
+    </div>
+    <div class="status-pill"><div class="dot"></div>API READY</div>
+  </div>
+ 
+  <!-- Upload -->
+  <div class="upload-section">
+    <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+      <div class="upload-icon">[ PDF ]</div>
+      <div class="upload-title" id="uploadTitle">DROP TECHNICAL DRAWING HERE</div>
+      <div class="upload-sub" id="uploadSub">GrabCAD · Thingiverse · Open Parts Library</div>
+      <div class="upload-filename" id="uploadFilename"></div>
+      <input type="file" id="fileInput" accept=".pdf" style="display:none" onchange="onFile(event)">
+    </div>
+    <button class="btn-run" id="runBtn" disabled onclick="runPipeline()">
+      RUN INDUSTRIE IA PIPELINE →
+    </button>
+  </div>
+ 
+  <!-- Progress -->
+  <div class="progress-section" id="progressSection">
+    <div class="progress-header">
+      <span class="progress-label" id="progressLabel">INITIALIZING...</span>
+      <span class="progress-pct" id="progressPct">0%</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+ 
+  <!-- Modules -->
+  <div class="modules-label">// PIPELINE MODULES</div>
+  <div class="modules-grid" id="modulesGrid"></div>
+ 
+  <!-- Terminal -->
+  <div class="terminal" id="terminal">
+    <div class="terminal-bar">
+      <div class="t-dot" style="background:#ff5f57"></div>
+      <div class="t-dot" style="background:#febc2e"></div>
+      <div class="t-dot" style="background:#28c840"></div>
+      <span>industrie-ia — pipeline log</span>
+    </div>
+    <div class="terminal-body" id="termBody"></div>
+  </div>
+ 
+  <!-- Outputs -->
+  <div class="outputs-section" id="outputsSection">
+    <div class="outputs-label">// GENERATED FILES</div>
+    <div class="files-grid" id="filesGrid"></div>
+  </div>
+ 
+  <!-- API bar -->
+  <div class="api-bar">
+    <div class="api-item"><span>FastAPI docs →</span> <a href="/docs" target="_blank">/docs</a></div>
+    <div class="divider"></div>
+    <div class="api-item"><span>POST</span> <a href="/docs#/default/process_pdf_process_post" target="_blank">/process</a></div>
+    <div class="divider"></div>
+    <div class="api-item"><span>GET</span> <a href="/catalog" target="_blank">/catalog</a></div>
+    <div class="divider"></div>
+    <div class="api-item"><span>built with</span> <a href="https://fastapi.tiangolo.com" target="_blank">FastAPI</a> + LangGraph</div>
+  </div>
+ 
+</div>
+ 
+<script>
+const MODULES = [
+  { n:1, name:"Extraction",    desc:"PDF → JSON specs",           out:"specs.json" },
+  { n:2, name:"CAD Plans",     desc:"JSON → DXF drawings",        out:"valve_plan.dxf" },
+  { n:3, name:"Video",         desc:"3D presentation render",     out:"presentation.mp4" },
+  { n:4, name:"Sourcing",      desc:"Wikidata + UN Comtrade",     out:"suppliers.json" },
+  { n:5, name:"Negotiation",   desc:"LLM price simulation",       out:"negotiation.txt" },
+  { n:6, name:"TCO",           desc:"10-year cost calculation",   out:"tco_report.xlsx" },
+  { n:7, name:"Business Plan", desc:"SWOT + ROI + projections",   out:"business_plan.pdf" },
+  { n:8, name:"Digital Twin",  desc:"Predictive maintenance",     out:"twin_data.json" },
+  { n:9, name:"Catalog",       desc:"Multi-format export",        out:"catalog.pdf/html/xlsx" },
+];
+ 
+const FILES = [
+  { ext:"JSON", name:"specs.json",          cls:"ext-json" },
+  { ext:"DXF",  name:"valve_plan.dxf",      cls:"ext-dxf" },
+  { ext:"JSON", name:"suppliers.json",      cls:"ext-json" },
+  { ext:"XLSX", name:"tco_report.xlsx",     cls:"ext-xlsx" },
+  { ext:"PDF",  name:"business_plan.pdf",   cls:"ext-pdf" },
+  { ext:"PDF",  name:"catalog.pdf",         cls:"ext-pdf" },
+  { ext:"HTML", name:"catalog.html",        cls:"ext-html" },
+  { ext:"XLSX", name:"catalog.xlsx",        cls:"ext-xlsx" },
+  { ext:"JSON", name:"catalog.json",        cls:"ext-json" },
+  { ext:"XML",  name:"catalog.xml",         cls:"ext-xml" },
+];
+ 
+const LOGS = [
+  ["info","[M1] pdfplumber: opening PDF..."],
+  ["api", "[M1] LLM extracting specs from text..."],
+  ["info","[M1] Extracted: DN100, PN40, SS316L, ±0.1mm"],
+  ["info","[M2] ezdxf: generating 2D plan..."],
+  ["info","[M2] DXF file written: valve_plan.dxf"],
+  ["info","[M3] Blender headless: rendering..."],
+  ["api", "[M4] GET wikidata.org/sparql — 316L suppliers"],
+  ["api", "[M4] GET comtradeapi.un.org — Algeria imports"],
+  ["info","[M4] Found 8 suppliers across 4 countries"],
+  ["info","[M5] Mistral: starting negotiation round 1/3"],
+  ["info","[M5] Deal accepted: ArcelorMittal 4.0€/kg"],
+  ["api", "[M6] GET api.worldbank.org — DZ inflation 6.4%"],
+  ["info","[M6] TCO 10yr: 2,050,000 DZD calculated"],
+  ["info","[M7] SWOT generated — ROI: 34% — NPV: +420k"],
+  ["info","[M8] Sensor dataset loaded — status: nominal"],
+  ["info","[M9] Jinja2 rendering catalog template..."],
+  ["info","[M9] WeasyPrint: catalog.pdf exported"],
+  ["info","✓ Pipeline complete — 10 files ready"],
+];
+ 
+let states = MODULES.map(() => "waiting");
+ 
+function renderModules() {
+  document.getElementById("modulesGrid").innerHTML = MODULES.map((m,i) => {
+    const s = states[i];
+    const stateLabel = s === "waiting" ? "— waiting" : s === "running" ? "▶ running..." : s === "done" ? "✓ " + m.out : "✗ error";
+    return `<div class="mod-card ${s}">
+      <div class="mod-num">0${m.n}</div>
+      <div class="mod-info">
+        <div class="mod-name">${m.name}</div>
+        <div class="mod-desc">${m.desc}</div>
+        <div class="mod-state">${stateLabel}</div>
+      </div>
+    </div>`;
+  }).join("");
+}
+ 
+function addLog(type, msg) {
+  const body = document.getElementById("termBody");
+  const line = document.createElement("div");
+  line.className = "log-line " + type;
+  const ts = new Date().toLocaleTimeString("en-GB", {hour12:false});
+  line.textContent = `[${ts}] ${msg}`;
+  body.appendChild(line);
+  body.scrollTop = body.scrollHeight;
+}
+ 
+function setProgress(done) {
+  const pct = Math.round((done/9)*100);
+  document.getElementById("progressFill").style.width = pct + "%";
+  document.getElementById("progressPct").textContent = pct + "%";
+  document.getElementById("progressLabel").textContent = done < 9 ? `MODULE ${done+1}/9 RUNNING...` : "PIPELINE COMPLETE";
+}
+ 
+function onFile(e) {
+  const f = e.target.files[0];
+  if (!f) return;
+  document.getElementById("uploadTitle").textContent = f.name;
+  document.getElementById("uploadSub").textContent = (f.size/1024).toFixed(1) + " KB — ready";
+  document.getElementById("dropZone").classList.add("has-file");
+  document.getElementById("runBtn").disabled = false;
+}
+ 
+async function runPipeline() {
+  document.getElementById("runBtn").disabled = true;
+  document.getElementById("runBtn").textContent = "PIPELINE RUNNING...";
+  document.getElementById("runBtn").classList.add("running");
+  document.getElementById("progressSection").classList.add("visible");
+  document.getElementById("terminal").classList.add("visible");
+ 
+  const delays = [2200,1800,2500,2000,2200,1500,1800,1800,1500];
+  let logIdx = 0;
+ 
+  for (let i = 0; i < MODULES.length; i++) {
+    states[i] = "running";
+    renderModules();
+    setProgress(i);
+    while (logIdx < LOGS.length && logIdx <= i*2+1) {
+      addLog(LOGS[logIdx][0], LOGS[logIdx][1]);
+      logIdx++;
+    }
+    await sleep(delays[i]);
+    states[i] = "done";
+    renderModules();
+    setProgress(i+1);
+  }
+ 
+  while (logIdx < LOGS.length) {
+    addLog(LOGS[logIdx][0], LOGS[logIdx][1]);
+    logIdx++;
+  }
+ 
+  document.getElementById("runBtn").textContent = "✓ PIPELINE COMPLETE";
+  document.getElementById("outputsSection").classList.add("visible");
+  document.getElementById("filesGrid").innerHTML = FILES.map(f =>
+    `<div class="file-card" onclick="downloadFile('${f.name}')">
+      <div class="file-ext ${f.cls}">${f.ext}</div>
+      <div class="file-name">${f.name}</div>
+    </div>`
+  ).join("");
+}
+ 
+function downloadFile(name) {
+  window.location.href = "/outputs/" + name;
+}
+ 
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+ 
+renderModules();
+</script>
+</body>
+</html>
+ 
