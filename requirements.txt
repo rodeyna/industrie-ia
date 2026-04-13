@@ -1,9 +1,12 @@
 fastapi
 uvicorn
+python-multipart
 pdfplumber
 langgraph
 langchain
 langchain-community
+langchain-ollama
+langchain-core
 ezdxf
 reportlab
 openpyxl
@@ -12,3 +15,7 @@ jinja2
 anthropic
 requests
 lxml
+pandas
+scikit-learn
+numpy
+python-dotenv

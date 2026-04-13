@@ -1,0 +1,33 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://user:pass@db:5432/industrie_ia
+      - OLLAMA_HOST=http://ollama:11434
+    volumes:
+      - ./outputs:/app/outputs
+      - ./templates:/app/templates      # ← add this
+      - ./modules:/app/modules          # ← add this
+    depends_on:
+      - db
+      - ollama
+
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_DB=industrie_ia
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  ollama:
+    image: ollama/ollama
+    volumes:
+      - ollama_data:/root/.ollama
+
+volumes:
+  postgres_data:
+  ollama_data:

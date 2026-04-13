@@ -1,0 +1,312 @@
+{
+  "data_source": "AI4I 2020 Kaggle Dataset",
+  "model": "IsolationForest (sklearn)",
+  "trained_on": 9661,
+  "total_monitored": 20,
+  "status_summary": {
+    "ok": 14,
+    "warning": 2,
+    "critical": 4
+  },
+  "overall_health": "CRITICAL",
+  "valves": [
+    {
+      "valve_id": "V-001",
+      "air_temp_c": 25.7,
+      "process_temp_c": 36.6,
+      "rpm": 1499,
+      "torque_nm": 40.3,
+      "tool_wear_min": 154,
+      "anomaly_score": -0.405,
+      "data_source": "real_kaggle",
+      "status": "OK",
+      "recommended_action": "Normal operation",
+      "predicted_failure_days": 402
+    },
+    {
+      "valve_id": "V-002",
+      "air_temp_c": 24.2,
+      "process_temp_c": 35.2,
+      "rpm": 1471,
+      "torque_nm": 38.2,
+      "tool_wear_min": 37,
+      "anomaly_score": -0.4493,
+      "data_source": "real_kaggle",
+      "status": "OK",
+      "recommended_action": "Normal operation",
+      "predicted_failure_days": 439
+    },
+    {
+      "valve_id": "V-003",
+      "air_temp_c": 27.5,
+      "process_temp_c": 38.8,
+      "rpm": 1463,
+      "torque_nm": 38.2,
+      "tool_wear_min": 41,
+      "anomaly_score": -0.4815,
+      "data_source": "real_kaggle",
+      "status": "OK",
+      "recommended_action": "Normal operation",
+      "predicted_failure_days": 412
+    },
+    {
+      "valve_id": "V-004",
+      "air_temp_c": 28.5,
+      "process_temp_c": 37.5,
+      "rpm": 1621,
+      "torque_nm": 33.7,
+      "tool_wear_min": 137,
+      "anomaly_score": -0.419,
+      "data_source": "real_kaggle",
+      "status": "OK",
+      "recommended_action": "Normal operation",
+      "predicted_failure_days": 280
+    },
+    {
+      "valve_id": "V-005",
+      "air_temp_c": 26.0,
+      "process_temp_c": 35.7,
+      "rpm": 1320,
+      "torque_nm": 67.5,
+      "tool_wear_min": 20,
+      "anomaly_score": -0.5777,
+      "data_source": "real_kaggle",
+      "status": "CRITICAL",
+      "recommended_action": "Immediate inspection required",
+      "predicted_failure_days": 4
+    },
+    {
+      "valve_id": "V-006",
+      "air_temp_c": 29.2,
+      "process_temp_c": 37.9,
+      "rpm": 1338,
+      "torque_nm": 67.6,
+      "tool_wear_min": 194,
+      "anomaly_score": -0.571,
+      "data_source": "real_kaggle",
+      "status": "CRITICAL",
+      "recommended_action": "Immediate inspection required",
+      "predicted_failure_days": 8
+    },
+    {
+      "valve_id": "V-007",
+      "air_temp_c": 24.9,
+      "process_temp_c": 35.4,
+      "rpm": 1585,
+      "torque_nm": 33.0,
+      "tool_wear_min": 24,
+      "anomaly_score": -0.446,
+      "data_source": "real_kaggle",
+      "status": "OK",
+      "recommended_action": "Normal operation",
+      "predicted_failure_days": 202
+    },
+    {
+      "valve_id": "V-008",
+      "air_temp_c": 28.7,
+      "process_temp_c": 36.7,
+      "rpm": 1546,
+      "torque_nm": 39.8,
+      "tool_wear_min": 121,
+      "anomaly_score": -0.4361,
+      "data_source": "real_kaggle",
+      "status": "OK",
+      "recommended_action": "Normal operation",
+      "predicted_failure_days": 458
+    },
+    {
+      "valve_id": "V-009",
+      "air_temp_c": 25.6,
+      "process_temp_c": 36.1,
+      "rpm": 1586,
+      "torque_nm": 31.4,
+      "tool_wear_min": 180,
+      "anomaly_score": -0.4322,
+      "data_source": "real_kaggle",
+      "status": "OK",
+      "recommended_action": "Normal operation",
+      "predicted_failure_days": 496
+    },
+    {
+      "valve_id": "V-010",
+      "air_temp_c": 24.5,
+      "process_temp_c": 36.5,
+      "rpm": 1501,
+      "torque_nm": 49.8,
+      "tool_wear_min": 222,
+      "anomaly_score": -0.502,
+      "data_source": "real_kaggle",
+      "status": "CRITICAL",
+      "recommended_action": "Immediate inspection required",
+      "predicted_failure_days": 13
+    },
+    {
+      "valve_id": "V-011",
+      "air_temp_c": 28.5,
+      "process_temp_c": 37.0,
+      "rpm": 1694,
+      "torque_nm": 26.3,
+      "tool_wear_min": 14,
+      "anomaly_score": -0.4875,
+      "data_source": "real_kaggle",
+      "status": "OK",
+      "recommended_action": "Normal operation",
+      "predicted_failure_days": 284
+    },
+    {
+      "valve_id": "V-012",
+      "air_temp_c": 25.0,
+      "process_temp_c": 35.6,
+      "rpm": 1691,
+      "torque_nm": 30.3,
+      "tool_wear_min": 49,
+      "anomaly_score": -0.4479,
+      "data_source": "real_kaggle",
+      "status": "OK",
+      "recommended_action": "Normal operation",
+      "predicted_failure_days": 389
+    },
+    {
+      "valve_id": "V-013",
+      "air_temp_c": 25.2,
+      "process_temp_c": 36.5,
+      "rpm": 1710,
+      "torque_nm": 27.3,
+      "tool_wear_min": 163,
+      "anomaly_score": -0.4565,
+      "data_source": "real_kaggle",
+      "status": "CRITICAL",
+      "recommended_action": "Immediate inspection required",
+      "predicted_failure_days": 12
+    },
+    {
+      "valve_id": "V-014",
+      "air_temp_c": 25.0,
+      "process_temp_c": 35.6,
+      "rpm": 1642,
+      "torque_nm": 30.3,
+      "tool_wear_min": 3,
+      "anomaly_score": -0.476,
+      "data_source": "real_kaggle",
+      "status": "OK",
+      "recommended_action": "Normal operation",
+      "predicted_failure_days": 237
+    },
+    {
+      "valve_id": "V-015",
+      "air_temp_c": 27.7,
+      "process_temp_c": 38.7,
+      "rpm": 1323,
+      "torque_nm": 61.1,
+      "tool_wear_min": 178,
+      "anomaly_score": -0.5668,
+      "data_source": "real_kaggle",
+      "status": "WARNING",
+      "recommended_action": "Schedule inspection within 30 days",
+      "predicted_failure_days": 37
+    },
+    {
+      "valve_id": "V-016",
+      "air_temp_c": 25.5,
+      "process_temp_c": 36.2,
+      "rpm": 1316,
+      "torque_nm": 51.4,
+      "tool_wear_min": 52,
+      "anomaly_score": -0.4724,
+      "data_source": "real_kaggle",
+      "status": "OK",
+      "recommended_action": "Normal operation",
+      "predicted_failure_days": 410
+    },
+    {
+      "valve_id": "V-017",
+      "air_temp_c": 25.6,
+      "process_temp_c": 36.1,
+      "rpm": 1396,
+      "torque_nm": 44.8,
+      "tool_wear_min": 178,
+      "anomaly_score": -0.4216,
+      "data_source": "real_kaggle",
+      "status": "OK",
+      "recommended_action": "Normal operation",
+      "predicted_failure_days": 435
+    },
+    {
+      "valve_id": "V-018",
+      "air_temp_c": 25.8,
+      "process_temp_c": 36.9,
+      "rpm": 1693,
+      "torque_nm": 28.8,
+      "tool_wear_min": 56,
+      "anomaly_score": -0.4392,
+      "data_source": "real_kaggle",
+      "status": "OK",
+      "recommended_action": "Normal operation",
+      "predicted_failure_days": 333
+    },
+    {
+      "valve_id": "V-019",
+      "air_temp_c": 28.2,
+      "process_temp_c": 38.0,
+      "rpm": 1495,
+      "torque_nm": 36.3,
+      "tool_wear_min": 193,
+      "anomaly_score": -0.428,
+      "data_source": "real_kaggle",
+      "status": "OK",
+      "recommended_action": "Normal operation",
+      "predicted_failure_days": 285
+    },
+    {
+      "valve_id": "V-020",
+      "air_temp_c": 25.1,
+      "process_temp_c": 35.7,
+      "rpm": 1302,
+      "torque_nm": 60.4,
+      "tool_wear_min": 34,
+      "anomaly_score": -0.5372,
+      "data_source": "real_kaggle",
+      "status": "WARNING",
+      "recommended_action": "Schedule inspection within 30 days",
+      "predicted_failure_days": 50
+    }
+  ],
+  "maintenance_schedule": [
+    {
+      "valve_id": "V-005",
+      "priority": "HIGH",
+      "action": "Immediate inspection required",
+      "due_in_days": 4
+    },
+    {
+      "valve_id": "V-006",
+      "priority": "HIGH",
+      "action": "Immediate inspection required",
+      "due_in_days": 8
+    },
+    {
+      "valve_id": "V-010",
+      "priority": "HIGH",
+      "action": "Immediate inspection required",
+      "due_in_days": 13
+    },
+    {
+      "valve_id": "V-013",
+      "priority": "HIGH",
+      "action": "Immediate inspection required",
+      "due_in_days": 12
+    },
+    {
+      "valve_id": "V-015",
+      "priority": "MEDIUM",
+      "action": "Schedule inspection within 30 days",
+      "due_in_days": 37
+    },
+    {
+      "valve_id": "V-020",
+      "priority": "MEDIUM",
+      "action": "Schedule inspection within 30 days",
+      "due_in_days": 50
+    }
+  ]
+}
