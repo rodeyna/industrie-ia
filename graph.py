@@ -2,7 +2,7 @@ from langgraph.graph import StateGraph, END
 from typing import TypedDict, List, Annotated
 import operator
 
-# 1. Define the Shared State (The "Briefcase")
+# Define the Shared State (The "Briefcase")
 class GraphState(TypedDict):
     specs: dict
     cad_path: str
@@ -11,23 +11,38 @@ class GraphState(TypedDict):
     final_catalog_path: str
     logs: Annotated[List[str], operator.add] 
 
-# 2. Import your module functions
-from modules.module1_extract import extract_specs_node
-from modules.module9_catalog import generate_catalog_node
-# (Import other modules as you finish them)
+# --- MOCK NODE (Replaces the incomplete Module 1) ---
+def mock_extract_node(state: GraphState):
+    print("\n--- [MOCK] Injecting Industrial Specs for Testing ---")
+    return {
+        "specs": {
+            "component": "Industrial Ball Valve",
+            "material": "Stainless Steel 316L",
+            "pressure_bar": 40,
+            "diameter_mm": 100,
+            "base_price": 550000
+        },
+        "logs": ["Mock: Manual specs injected successfully."]
+    }
 
-# 3. Initialize the Graph
+# Import working modules
+# from modules.module1_extract import extract_specs_node # <-- Skip this for now
+from modules.module6_tco import calculate_tco_node  
+from modules.module9_catalog import generate_catalog_node
+
+# Initialize the Graph
 workflow = StateGraph(GraphState)
 
-# 4. Add Nodes
-workflow.add_node("extractor", extract_specs_node)
+# Add Nodes
+workflow.add_node("extractor", mock_extract_node) # <--- Point to the Mock
+workflow.add_node("calculator", calculate_tco_node) 
 workflow.add_node("publisher", generate_catalog_node)
 
-# 5. Define the Flow (Edges)
+# DEFINE THE FLOW
 workflow.set_entry_point("extractor")
-
-workflow.add_edge("extractor", "publisher")
+workflow.add_edge("extractor", "calculator")   
+workflow.add_edge("calculator", "publisher")  
 workflow.add_edge("publisher", END)
 
-# 6. Compile the Graph
+# Compile the graph
 app = workflow.compile()
