@@ -1,0 +1,19 @@
+
+    INDUSTRIAL BUSINESS PLAN
+    -------------------------
+    Project: 200 Industrial Valves
+    Material: Inox 316L
+    
+    FINANCIAL SUMMARY:
+    ROI: 88.89%
+    VAN: 4,737.04 DZD
+    
+    
+    SWOT Analysis for 200 valves (Inox 316L).
+    Total Cost: 45000.0 DZD.
+    1. Strengths: High quality material.
+    2. Weaknesses: Initial setup cost.
+    3. Opportunities: Industrial growth in Algeria.
+    4. Threats: Material price fluctuation.
+    
+    
