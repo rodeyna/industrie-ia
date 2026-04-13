@@ -81,4 +81,4 @@ def run_module_4():
     print("✅ Module 4 Complete! 'suppliers_data.json' and 'real_suppliers.csv' are ready.")
 
 if __name__ == "__main__":
-    run_module_4()  
+    run_module_4()   
