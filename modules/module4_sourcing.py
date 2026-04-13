@@ -1,6 +1,6 @@
 import pandas as pd
 import json
-import os
+import os 
 import random
 
 def run_module_4():
@@ -9,6 +9,7 @@ def run_module_4():
     
     # 1. READ THE DATA FROM MODULE 1 (The file your friend sent)
     input_file = os.path.join(script_dir, "requirements.json")
+    output_file = os.path.join(script_dir, "real_suppliers.csv")
     try:
         with open(input_file, 'r') as f:
             module1_data = json.load(f)
