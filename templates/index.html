@@ -88,7 +88,6 @@
 </head>
 <body>
 <div class="container">
- 
   <div class="header">
     <div class="logo">
       <div class="logo-mark">
@@ -106,7 +105,7 @@
     </div>
     <div class="status-pill"><div class="dot"></div>API READY</div>
   </div>
- 
+
   <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
     <div class="upload-icon">[ PDF ]</div>
     <div class="upload-title" id="uploadTitle">DROP TECHNICAL DRAWING HERE</div>
@@ -114,11 +113,11 @@
     <div class="upload-filename" id="uploadFilename"></div>
     <input type="file" id="fileInput" accept=".pdf" style="display:none" onchange="onFile(event)">
   </div>
- 
+
   <button class="btn-run" id="runBtn" disabled onclick="runPipeline()">
     RUN INDUSTRIE IA PIPELINE →
   </button>
- 
+
   <div class="progress-section" id="progressSection">
     <div class="progress-header">
       <span class="progress-label" id="progressLabel">INITIALIZING...</span>
@@ -126,9 +125,9 @@
     </div>
     <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
   </div>
- 
+
   <div class="error-banner" id="errorBanner"></div>
- 
+
   <div class="terminal" id="terminal">
     <div class="terminal-bar">
       <div class="t-dot" style="background:#ff5f57"></div>
@@ -138,12 +137,12 @@
     </div>
     <div class="terminal-body" id="termBody"></div>
   </div>
- 
+
   <div class="outputs-section" id="outputsSection">
     <div class="outputs-label">// GENERATED FILES — CLICK TO DOWNLOAD</div>
     <div class="files-grid" id="filesGrid"></div>
   </div>
- 
+
   <div class="api-bar">
     <div class="api-item"><span>docs →</span> <a href="/docs" target="_blank">/docs</a></div>
     <div class="divider"></div>
@@ -153,24 +152,9 @@
     <div class="divider"></div>
     <div class="api-item"><span>GET</span> <a href="/outputs-list" target="_blank">/outputs-list</a></div>
   </div>
- 
 </div>
+
 <script>
-const FILES_META = [
-  { ext:"JSON", name:"specs.json",        cls:"ext-json" },
-  { ext:"DXF",  name:"valve_plan.dxf",    cls:"ext-dxf"  },
-  { ext:"JSON", name:"suppliers.json",    cls:"ext-json" },
-  { ext:"JSON", name:"negotiation.json",  cls:"ext-json" },
-  { ext:"XLSX", name:"tco_report.xlsx",   cls:"ext-xlsx" },
-  { ext:"PDF",  name:"business_plan.pdf", cls:"ext-pdf"  },
-  { ext:"JSON", name:"digital_twin.json", cls:"ext-json" },
-  { ext:"PDF",  name:"catalog.pdf",       cls:"ext-pdf"  },
-  { ext:"HTML", name:"catalog.html",      cls:"ext-html" },
-  { ext:"XLSX", name:"catalog.xlsx",      cls:"ext-xlsx" },
-  { ext:"JSON", name:"catalog.json",      cls:"ext-json" },
-  { ext:"XML",  name:"catalog.xml",       cls:"ext-xml"  },
-];
- 
 function addLog(type, msg) {
   const body = document.getElementById("termBody");
   const line = document.createElement("div");
@@ -180,13 +164,13 @@ function addLog(type, msg) {
   body.appendChild(line);
   body.scrollTop = body.scrollHeight;
 }
- 
+
 function setProgress(pct, label) {
   document.getElementById("progressFill").style.width = pct + "%";
   document.getElementById("progressPct").textContent = pct + "%";
   document.getElementById("progressLabel").textContent = label;
 }
- 
+
 function onFile(e) {
   const f = e.target.files[0];
   if (!f) return;
@@ -195,114 +179,104 @@ function onFile(e) {
   document.getElementById("dropZone").classList.add("has-file");
   document.getElementById("runBtn").disabled = false;
 }
- 
+
 async function runPipeline() {
   const file = document.getElementById("fileInput").files[0];
   if (!file) return;
- 
+
   document.getElementById("runBtn").disabled = true;
   document.getElementById("runBtn").textContent = "PIPELINE RUNNING...";
   document.getElementById("runBtn").classList.add("running");
   document.getElementById("progressSection").classList.add("visible");
   document.getElementById("terminal").classList.add("visible");
   document.getElementById("errorBanner").classList.remove("visible");
- 
+
   setProgress(5, "SENDING PDF TO PIPELINE...");
   addLog("info", "Uploading PDF to FastAPI...");
- 
+
   const formData = new FormData();
   formData.append("file", file);
- 
+
   try {
     addLog("api", "POST /process — starting LangGraph pipeline...");
     setProgress(10, "PIPELINE RUNNING — PLEASE WAIT...");
- 
-    const response = await fetch("/process", {
-      method: "POST",
-      body: formData
-    });
- 
-    if (!response.ok) throw new Error("Server error: " + response.status + " " + response.statusText);
- 
-const result = await response.json();
-setProgress(100, "PIPELINE COMPLETE");
-addLog("info", "Pipeline finished successfully");
 
-// Log real data from each module
-if (result.specs) {
-    const brand = result.specs.identity?.brand || result.specs.part_name || "extracted";
-    const mat   = result.specs.materials?.body_stainless_steel || result.specs.material || "found";
-    addLog("info", "[M1] Part: " + brand);
-    addLog("info", "[M1] Material: " + mat);
-}
-if (result.suppliers && result.suppliers.length > 0) {
-    addLog("api", "[M4] " + result.suppliers.length + " suppliers found");
-    const best = result.suppliers[0];
-    if (best) addLog("api", "[M4] Best: " + (best.Supplier || best.name) + " — " + (best.Location || best.country));
-}
-if (result.tco_total) {
-    addLog("info", "[M6] TCO: " + result.tco_total + " DZD");
-}
-if (result.catalog_files) {
-    const formats = Object.keys(result.catalog_files).length;
-    addLog("info", "[M9] Catalog exported in " + formats + " formats");
-}
+    const response = await fetch("/process", { method: "POST", body: formData });
+    if (!response.ok) throw new Error("Server error: " + response.status);
 
-// Show errors if any
-if (result.errors && result.errors.length > 0) {
-    const banner = document.getElementById("errorBanner");
-    banner.textContent = "⚠ " + result.errors.length + " module(s) had errors: " + result.errors.map(e => e.module).join(", ");
-    banner.classList.add("visible");
-    result.errors.forEach(e => addLog("warn", "[ERROR] " + e.module + ": " + e.error));
-}
+    const result = await response.json();
+    setProgress(100, "PIPELINE COMPLETE");
+    addLog("info", "Pipeline finished successfully");
 
-// Build REAL file list from what the pipeline actually generated
-document.getElementById("runBtn").textContent = "✓ PIPELINE COMPLETE";
-document.getElementById("outputsSection").classList.add("visible");
+    // --- Logs Techniques ---
+    if (result.specs) {
+        const brand = result.specs.identity?.brand || result.specs.part_name || "extracted";
+        const mat   = result.specs.materials?.body_stainless_steel || result.specs.material || "found";
+        addLog("info", "[M1] Part: " + brand);
+        addLog("info", "[M1] Material: " + mat);
+    }
+    if (result.suppliers && result.suppliers.length > 0) {
+        addLog("api", "[M4] " + result.suppliers.length + " suppliers found");
+    }
+    if (result.tco_total) {
+        addLog("info", "[M6] TCO: " + result.tco_total + " DZD");
+    }
 
-const realFiles = [];
+    // --- Gestion des fichiers (CORRIGÉ) ---
+    const realFiles = []; // Déclaré avant utilisation
 
-// From M9 catalog — these are the main outputs user wants
-if (result.catalog_files) {
-    if (result.catalog_files.pdf)  realFiles.push({ ext:"PDF",  name:"catalog.pdf",  cls:"ext-pdf"  });
-    if (result.catalog_files.html) realFiles.push({ ext:"HTML", name:"catalog.html", cls:"ext-html" });
-    if (result.catalog_files.xlsx) realFiles.push({ ext:"XLSX", name:"catalog.xlsx", cls:"ext-xlsx" });
-    if (result.catalog_files.json) realFiles.push({ ext:"JSON", name:"catalog.json", cls:"ext-json" });
-    if (result.catalog_files.xml)  realFiles.push({ ext:"XML",  name:"catalog.xml",  cls:"ext-xml"  });
-} else {
-    // fallback — show catalog.pdf anyway
-    realFiles.push({ ext:"PDF", name:"catalog.pdf", cls:"ext-pdf" });
-}
+    // M9 Catalog
+    if (result.catalog_files) {
+        if (result.catalog_files.pdf)  realFiles.push({ ext:"PDF",  name:"catalog.pdf",  cls:"ext-pdf"  });
+        if (result.catalog_files.html) realFiles.push({ ext:"HTML", name:"catalog.html", cls:"ext-html" });
+        if (result.catalog_files.xlsx) realFiles.push({ ext:"XLSX", name:"catalog.xlsx", cls:"ext-xlsx" });
+    } else {
+        realFiles.push({ ext:"PDF", name:"catalog.pdf", cls:"ext-pdf" });
+    }
 
-// Other module outputs
-realFiles.push({ ext:"XLSX", name:"tco_analysis.xlsx",   cls:"ext-xlsx" });
-realFiles.push({ ext:"JSON", name:"digital_twin.json",   cls:"ext-json" });
-realFiles.push({ ext:"JSON", name:"specs.json",          cls:"ext-json" });
-realFiles.push({ ext:"JSON", name:"suppliers_data.json", cls:"ext-json" });
+    // M2 / M3
+    if (result.dxf_path) realFiles.push({ ext:"DXF", name:"valve_plan.dxf", cls:"ext-dxf" });
+    if (result.video_path) realFiles.push({ ext:"MP4", name:"presentation_video.mp4", cls:"ext-pdf" });
 
-document.getElementById("filesGrid").innerHTML = realFiles.map(f =>
-    '<div class="file-card" onclick="downloadFile(\'' + f.name + '\')">' +
-        '<div class="file-ext ' + f.cls + '">' + f.ext + '</div>' +
-        '<div class="file-name">' + f.name + '</div>' +
-    '</div>'
-).join("");
- 
+    // Rapports Standards
+    realFiles.push({ ext:"XLSX", name:"tco_analysis.xlsx", cls:"ext-xlsx" });
+    realFiles.push({ ext:"JSON", name:"digital_twin.json", cls:"ext-json" });
+    realFiles.push({ ext:"XLSX", name:"Business_Plan_Calculations.xlsx", cls:"ext-xlsx" });
+    realFiles.push({ ext:"JSON", name:"suppliers_data.json", cls:"ext-json" });
+
+    // Affichage des erreurs si présentes
+    if (result.errors && result.errors.length > 0) {
+        const banner = document.getElementById("errorBanner");
+        banner.textContent = "⚠ " + result.errors.length + " module(s) had errors.";
+        banner.classList.add("visible");
+        result.errors.forEach(e => addLog("warn", "[ERROR] " + e.module + ": " + e.error));
+    }
+
+    // Mise à jour de l'interface
+    document.getElementById("runBtn").textContent = "✓ PIPELINE COMPLETE";
+    document.getElementById("outputsSection").classList.add("visible");
+    document.getElementById("filesGrid").innerHTML = realFiles.map(f =>
+        `<div class="file-card" onclick="downloadFile('${f.name}')">
+            <div class="file-ext ${f.cls}">${f.ext}</div>
+            <div class="file-name">${f.name}</div>
+        </div>`
+    ).join("");
+
   } catch (err) {
     setProgress(0, "ERROR");
     addLog("warn", "Error: " + err.message);
-    const banner = document.getElementById("errorBanner");
-    banner.textContent = "✗ " + err.message;
-    banner.classList.add("visible");
+    document.getElementById("errorBanner").textContent = "✗ " + err.message;
+    document.getElementById("errorBanner").classList.add("visible");
     document.getElementById("runBtn").disabled = false;
     document.getElementById("runBtn").textContent = "RETRY PIPELINE →";
     document.getElementById("runBtn").classList.remove("running");
   }
 }
- 
+
 function downloadFile(name) {
     const a = document.createElement("a");
-    a.href = "/download/" + name;   // uses new download endpoint
-    a.download = name;              // tells browser to download not preview
+    a.href = "/download/" + name;
+    a.download = name;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

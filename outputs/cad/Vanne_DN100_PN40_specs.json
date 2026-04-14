@@ -1,0 +1,16 @@
+{
+  "designation": "Vanne_DN100_PN40",
+  "diametre_nominal": 100,
+  "pression_nominale": 40,
+  "longueur": 250,
+  "materiau": "Stainless Steel 316L",
+  "epaisseur_paroi": 8,
+  "nb_boulons": 8,
+  "diametre_boulon": 16,
+  "diametre_bride": 220,
+  "hauteur_corps": 160,
+  "diametre_actuateur": 60,
+  "hauteur_actuateur": 80,
+  "tolerance": "±0.1 mm",
+  "norme": "EN 1092-1"
+}
