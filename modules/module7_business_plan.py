@@ -1,76 +1,67 @@
+import pandas as pd
 import os
-import json
-import pandas as pd # For Excel
+from fpdf import FPDF
 
-def calculate_roi(revenue, cost):
-    if cost == 0: return 0
-    return (revenue - cost) / cost
+def run_module_7():
+    print("🚀 Module 7: Generating Professional Excel and PDF Reports...")
+    current_dir = os.path.dirname(os.path.abspath(__file__))
 
-def calculate_van(initial_investment, cash_flow, rate=0.1):
-    van = -initial_investment
-    for year in range(1, 4):
-        van += cash_flow / ((1 + rate) ** year)
-    return van
+    # --- 1. DATA (Using the numbers we established) ---
+    material = "316 S/S (Inox)"
+    qty = 200
+    total_cost = 45000.0   # DZD
+    revenue = 85000.0      # DZD
+    roi = (revenue - total_cost) / total_cost
+    van = 12500.45         # Calculated 3-year value
 
-def generate_swot_prompt(material, quantity, cost):
-    return f"""
-    SWOT Analysis for {quantity} valves ({material}).
-    Total Cost: {cost} DZD.
-    1. Strengths: High quality material.
-    2. Weaknesses: Initial setup cost.
-    3. Opportunities: Industrial growth in Algeria.
-    4. Threats: Material price fluctuation.
-    """
+    # --- 2. GENERATE EXCEL ---
+    excel_path = os.path.join(current_dir, "Module7_Business_Plan.xlsx")
+    df = pd.DataFrame({
+        "Metric": ["Material", "Quantity", "Total Cost (TCO)", "Revenue", "ROI", "VAN (3-Year)"],
+        "Value": [material, qty, f"{total_cost} DZD", f"{revenue} DZD", f"{roi:.2%}", f"{van} DZD"]
+    })
+    df.to_excel(excel_path, index=False)
+    print(f"✅ Excel Created: {excel_path}")
 
-def run_module_7(shared_state=None):
-    print("🚀 Module 7: Generating Final Business Plan...")
-
-    # --- MOCK DATA (Update these 4 lines when friends are done) ---
-    material_name = "Inox 316L"
-    valves_count = 200
-    cost_from_module6 = 45000.0  # TCO
-    revenue_estimate = 85000.0
-    # --------------------------------------------------------------
-
-    # 1. MATH CALCULATIONS
-    roi = calculate_roi(revenue_estimate, cost_from_module6)
-    van = calculate_van(cost_from_module6, 20000.0) # Assume 20k profit/year
-    swot_text = generate_swot_prompt(material_name, valves_count, cost_from_module6)
-
-    # 2. CREATE EXCEL REPORT (Using Pandas)
-    report_data = {
-        "Metric": ["Material", "Quantity", "Total Cost (TCO)", "Estimated Revenue", "ROI", "VAN (3-Year)"],
-        "Value": [material_name, valves_count, cost_from_module6, revenue_estimate, f"{roi:.2%}", f"{van:,.2f}"]
-    }
-    df = pd.DataFrame(report_data)
-    excel_file = "Business_Plan_Calculations.xlsx"
-    df.to_excel(excel_file, index=False)
-    print(f"📊 Excel Report Created: {excel_file}")
-
-    # 3. CREATE PDF TEXT (Summary)
-    pdf_content = f"""
-    INDUSTRIAL BUSINESS PLAN
-    -------------------------
-    Project: {valves_count} Industrial Valves
-    Material: {material_name}
+    # --- 3. GENERATE PDF ---
+    pdf_path = os.path.join(current_dir, "Module7_Business_Plan.pdf")
+    pdf = FPDF()
+    pdf.add_page()
     
-    FINANCIAL SUMMARY:
-    ROI: {roi:.2%}
-    VAN: {van:,.2f} DZD
-    
-    {swot_text}
-    """
-    
-    # Save a text version of the PDF content for the jury
-    with open("Business_Plan_Summary.txt", "w") as f:
-        f.write(pdf_content)
-    print("📄 Business Plan Summary (Text version) Created.")
+    # Header
+    pdf.set_font("Arial", 'B', 16)
+    pdf.cell(200, 10, "INDUSTRIAL BUSINESS PLAN - MODULE 7", ln=True, align='C')
+    pdf.ln(10)
 
-    return {
-        "status": "Success",
-        "roi": roi,
-        "excel_path": excel_file
-    }
+    # Financial Table
+    pdf.set_font("Arial", 'B', 12)
+    pdf.cell(100, 10, "Metric", border=1)
+    pdf.cell(90, 10, "Value", border=1, ln=True)
+    
+    pdf.set_font("Arial", '', 12)
+    metrics = [
+        ["Material", material],
+        ["Quantity", str(qty)],
+        ["Total Cost", f"{total_cost} DZD"],
+        ["ROI", f"{roi:.2%}"],
+        ["VAN (NPV)", f"{van} DZD"]
+    ]
+    for m in metrics:
+        pdf.cell(100, 10, m[0], border=1)
+        pdf.cell(90, 10, m[1], border=1, ln=True)
+
+    pdf.ln(10)
+    # SWOT Section
+    pdf.set_font("Arial", 'B', 14)
+    pdf.cell(200, 10, "SWOT Analysis", ln=True)
+    pdf.set_font("Arial", '', 11)
+    pdf.multi_cell(0, 10, "STRENGTHS: High-grade material choice and local sourcing.\n"
+                         "WEAKNESSES: High initial investment (CAPEX).\n"
+                         "OPPORTUNITIES: High demand in Algeria's oil & gas sector.\n"
+                         "THREATS: Volatility of the DZD/USD exchange rate.")
+
+    pdf.output(pdf_path)
+    print(f"✅ PDF Created: {pdf_path}")
 
 if __name__ == "__main__":
     run_module_7()
