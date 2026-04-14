@@ -1,0 +1,75 @@
+{
+    "identification": {
+        "name": "KTM SERIES EB588 FLOATING BALL VALVE",
+        "manufacturer": "Emerson",
+        "series": "EB588"
+    },
+    "bill_of_materials": {
+        "Body": "ASTM A216-WCC (Carbon Steel)",
+        "End Connector": "ASTM A216-WCC (Carbon Steel)",
+        "Cap Screw": "316 S/S A4-80",
+        "Body Nut": "316 S/S A4-80",
+        "Ball": "UNS S31600",
+        "Seat Ring": "Virgin PTFE, Carbon reinforced PTFE",
+        "Stem": "UNS S31600",
+        "Primary Stem Seal": "Carbon reinforced PTFE",
+        "Firesafe Stem Seal": "Graphite",
+        "Stop Plate": "UNS S30400",
+        "Spring Washer": "Inconel",
+        "Gland Nut": "UNS S31600",
+        "Gland": "UNS S31600",
+        "Tab Washer": "UNS S31600",
+        "Wrench": "UNS S30400",
+        "Wrench Nut": "UNS S31600",
+        "Name Plate": "UNS S30400"
+    },
+    "mechanical_specs": {
+        "pressure_rating": "ASME Class 800",
+        "temperature_range": "-40\u00b0C to 260\u00b0C",
+        "connections_type": [
+            "Threaded BSPT",
+            "Socket weld",
+            "NPT"
+        ]
+    },
+    "cad_dimensions": {
+        "DN 15 - 50 (NPS \u00bd - 2)": {
+            "H": 45.0,
+            "G": 24.0,
+            "Kv": 140
+        },
+        "DN 20 - 50 (NPS \u00be - 2)": {
+            "H": 50.0,
+            "G": 25.5,
+            "Kv": 140
+        },
+        "DN 25 - 50 (NPS 1 - 2)": {
+            "H": 61.5,
+            "G": 31.5,
+            "Kv": 160
+        },
+        "DN 32 - 50 (NPS 1 \u00bc - 2)": {
+            "H": 70.5,
+            "G": 35.0,
+            "Kv": 160
+        },
+        "DN 40 - 50 (NPS 1 \u00bd - 2)": {
+            "H": 81.0,
+            "G": 41.0,
+            "Kv": 160
+        },
+        "DN 50 - 50 (NPS 2 - 2)": {
+            "H": 95.0,
+            "G": 48.0,
+            "Kv": 200
+        }
+    },
+    "design_standards": [
+        "EN 10204/ISO 10474 Type 3.1",
+        "API 607 6th Edition"
+    ],
+    "manufacturing_notes": {
+        "tolerances": "+/- 1 mm",
+        "special_instructions": ""
+    }
+}

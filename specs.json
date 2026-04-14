@@ -1,0 +1,36 @@
+{
+    "identity": {
+        "brand": "Texas Instruments",
+        "series": "NE5534/SA5534",
+        "valve_type": "Low-Noise Operational Amplifier"
+    },
+    "materials": {
+        "body_stainless_steel": "ASTM A351-CF8M",
+        "body_carbon_steel": "",
+        "ball_stem": "",
+        "seats": "PTFE/Carbon reinforced"
+    },
+    "ratings": {
+        "pressure_class": "",
+        "max_temperature": "150\u00b0C",
+        "fire_safe": ""
+    },
+    "selected_model_specs": {
+        "dn_size": 50,
+        "nps_size": "2 inch",
+        "dimensions_mm": {
+            "H": "4.90mm",
+            "G": "3.91mm",
+            "C": "",
+            "D": "",
+            "F": "",
+            "K": ""
+        },
+        "mass_kg": 4.8
+    },
+    "compliance": [
+        "NACE",
+        "API 608",
+        "ISO"
+    ]
+}

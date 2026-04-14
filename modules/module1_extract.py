@@ -7,120 +7,79 @@ from langchain_core.prompts import ChatPromptTemplate
 
 def extract_specs(pdf_path):
     """
-    Core Logic: Reads the technical PDF and uses Llama 3.2 to extract 
-    highly detailed industrial specifications.
+    General-purpose industrial extractor optimized for downstream CAD, 
+    Sourcing, and Financial modules.
     """
-    print(f"--- Detailed Technical Audit Started: {pdf_path} ---")
+    print(f"--- [Module 1] Analyzing Technical Document: {pdf_path} ---")
     
+    # 1. Robust Text Extraction
     raw_text = ""
     try:
         with pdfplumber.open(pdf_path) as pdf:
-            # Analyze the first 4 pages to capture all technical data
-            for page in pdf.pages[:4]:
+            # We read the first 6 pages (enough for any technical datasheet)
+            pages_to_read = pdf.pages[:6]
+            for page in pages_to_read:
                 text = page.extract_text()
-                if text:
-                    raw_text += text + "\n"
+                if text: raw_text += text + "\n"
     except Exception as e:
-        return {"error": f"Failed to read PDF: {str(e)}"}
+        return {"error": f"PDF Read Failure: {str(e)}"}
 
-    # Initialize Local LLM (Llama 3.2)
+    # 2. Local AI Setup
     llm = ChatOllama(model="llama3.2", temperature=0)
 
-    # Master Engineering Prompt
+    # 3. THE "GENERAL PURPOSE" PROMPT
+    # We tell the AI to map whatever it finds to the roles needed by other modules
     prompt = ChatPromptTemplate.from_template("""
-    SYSTEM: You are a Senior Mechanical Engineer. Extract a HIGH-PRECISION technical profile from the following text.
+    You are an Industrial Systems Architect. Extract all technical data from this text:
     
-    TEXT: {text}
+    TEXT:
+    {text}
 
-    Return ONLY a single valid JSON object. Do not include any other text.
+    TASK:
+    Identify the main product and extract data for the following downstream departments:
     
-    REQUIRED STRUCTURE:
-    {{
-      "identity": {{
-        "brand": "Manufacturer name",
-        "series": "Model/Series number",
-        "valve_type": "Full technical description"
-      }},
-      "materials": {{
-        "body_stainless_steel": "Grade (e.g. ASTM A351-CF8M)",
-        "body_carbon_steel": "Grade (e.g. ASTM A216-WCC)",
-        "ball_stem": "Material code (e.g. UNS S31600)",
-        "seats": "Seat material (e.g. PTFE/Carbon reinforced)"
-      }},
-      "ratings": {{
-        "pressure_class": "e.g. ASME Class 800",
-        "max_temperature": "Maximum operating temp",
-        "fire_safe": "Certification status"
-      }},
-      "selected_model_specs": {{
-        "dn_size": 50,
-        "nps_size": "2 inch",
-        "dimensions_mm": {{
-          "H": "Value",
-          "G": "Value",
-          "C": "Value",
-          "D": "Value",
-          "F": "Value",
-          "K": "Value"
-        }},
-        "mass_kg": 4.8
-      }},
-      "compliance": ["List all standards found: NACE, API 608, API 607, ISO, etc."]
-    }}
+    1. FOR CAD (Module 2): Extract all physical dimensions. Map them to clear names like 
+       'total_length', 'total_height', 'center_to_top', 'flange_diameter'. Use mm if available.
+    2. FOR SOURCING (Module 4): Extract specific material grades for every part 
+       (Body, Stem, Ball/Disc, Seats, Seals).
+    3. FOR FINANCE (Module 6/7): Extract Pressure Class (PN/ASME), Temperature Limits, 
+       and Weight.
+    4. FOR CATALOG (Module 9): Extract Product Name, Series, and Certifications (ISO, API, EN).
+
+    OUTPUT FORMAT:
+    Return ONLY a valid JSON object with these keys:
+    - identification: (name, manufacturer, series)
+    - bill_of_materials: (part_name: material_grade)
+    - mechanical_specs: (pressure_rating, temperature_range, connections_type)
+    - cad_dimensions: (A dictionary of all numerical dimensions found)
+    - design_standards: (List of API, ISO, or EN standards)
+    - manufacturing_notes: (Any tolerances or special instructions)
+
+    If a value is missing, use "Unknown". Return ONLY JSON.
     """)
 
+    # 4. Process with AI
     chain = prompt | llm
-    print("--- AI is analyzing technical tables... ---")
-    response = chain.invoke({"text": raw_text})
+    response = chain.invoke({"text": raw_text[:12000]})
     
-    # Cleaning the output to extract JSON from any conversational text
+    # 5. The "Unbreakable" JSON Cleaner
     content = response.content
     match = re.search(r'(\{.*\})', content, re.DOTALL)
     
     if match:
-        json_str = match.group(1)
         try:
-            return json.loads(json_str)
-        except Exception:
-            return {"error": "JSON Parse Error", "raw": json_str}
-    
-    return {"error": "No JSON detected", "raw": content}
+            return json.loads(match.group(1))
+        except:
+            return {"error": "JSON parse failed", "raw": content}
+    return {"error": "No data found", "raw": content}
 
-# --- LANGGRAPH NODE INTEGRATION (Following The Rule) ---
-
-def run_module1_extraction(state: dict) -> dict:
-    """
-    Pattern: run_moduleX(state) -> state
-    This function is what the LangGraph orchestrator will call.
-    """
-    print("\n--- [NODE] Starting Module 1: Extraction ---")
-    
-    # STEP 1 — Read what you need from the box
-    # In this case, we need the file path of the PDF
-    pdf_path = state.get("pdf_path", "test.pdf")
-    
-    # STEP 2 — Do your work
-    extracted_specs = extract_specs(pdf_path)
-    
-    # STEP 3 — Return the FULL box + your new thing
-    # We add the 'specs' key to the state for all other modules to use
-    return {**state, "specs": extracted_specs}
-
-# --- TEST BLOCK ---
 if __name__ == "__main__":
-    file_path = "test.pdf" 
-    if os.path.exists(file_path):
-        # We simulate the graph by creating an initial state dictionary
-        initial_state = {"pdf_path": file_path}
-        
-        # Run the node
-        final_state = run_module1_extraction(initial_state)
-        
-        # Save output for reference
-        with open("specs.json", "w") as f:
-            json.dump(final_state["specs"], f, indent=4)
-            
-        print("\n--- EXTRACTION COMPLETE ---")
-        print(json.dumps(final_state["specs"], indent=2))
+    # This will work with ANY pdf named test.pdf in the folder
+    target_pdf = "test.pdf" 
+    if os.path.exists(target_pdf):
+        final_specs = extract_specs(target_pdf)
+        with open("extracted_specs.json", "w") as f:
+            json.dump(final_specs, f, indent=4)
+        print("✅ Extraction Complete. Data saved to extracted_specs.json")
     else:
-        print(f"Error: {file_path} not found.")
+        print("❌ Please provide a test.pdf file.")
